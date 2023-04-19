@@ -7,17 +7,37 @@ import Model.Account;
 import Util.ConnectionUtil;
 
 public class AccountDAO {
+    //get all accounts
 
     //Search account by username
-    public Account searchaccount(Account account){
+    public Account searchaccountbyusername (String username){
         Connection connection=ConnectionUtil.getConnection();
         try{
             String sql="SELECT * FROM account WHERE username = ? ";
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
-            preparedStatement.setString(1, account.username);
+            preparedStatement.setString(1,username);
             ResultSet rs = preparedStatement.executeQuery();
-            if(rs.next()){
-               return Account(rs.getInt("account_id"),rs.getString("username"),rs.getString("password"));
+            while(rs.next()){
+                Account account=new Account(rs.getInt("account_id"),rs.getString("username"),rs.getString("password"));
+                return account;
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+      //Search account by password
+      public Account searchaccountbypassword (String password){
+        Connection connection=ConnectionUtil.getConnection();
+        try{
+            String sql="SELECT * FROM account WHERE password = ? ";
+            PreparedStatement preparedStatement=connection.prepareStatement(sql);
+            preparedStatement.setString(1,password);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Account account=new Account(rs.getInt("account_id"),rs.getString("username"),rs.getString("password"));
+                return account;
             }
         }
         catch(SQLException e){
@@ -26,27 +46,21 @@ public class AccountDAO {
         return null;
     }
 
-
-    private Account Account(int int1, String string, String string2) {
-        return null;
-    }
-
-
     //insert account
-    public  Account insertaccount(Account account){
+    public  Account insertaccount(String username,String password){
 
         Connection connection=ConnectionUtil.getConnection();
         
         try{
-            String sql="INSERT INTO account (username,password) VALUES(?,?)";
+            String sql="INSERT INTO Account (username,password) VALUES(?,?)";
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
-            preparedStatement.setString(0, account.username);
-            preparedStatement.setString(1, account.password);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
             preparedStatement.executeUpdate();
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-            if(pkeyResultSet.next()){
+            while(pkeyResultSet.next()){
                 int generated_Account_id = (int) pkeyResultSet.getLong(1);
-                return new Account(generated_Account_id, account.getUsername(), account.getPassword());
+                return new Account(generated_Account_id, username, password);
             }
         }
         catch(SQLException e){
@@ -57,4 +71,23 @@ public class AccountDAO {
 
     }
     
+    //login account 
+    public Account loginAccount(String username,String password){
+        Connection connection= ConnectionUtil.getConnection();
+        
+        try {
+            String sql="SELECT * FROM accounts WHERE username = ?,password = ? ";
+            PreparedStatement preparedStatement=connection.prepareStatement(sql);
+            preparedStatement.setString(1,username );
+            preparedStatement.setString(2, password);
+            ResultSet rs=preparedStatement.executeQuery();
+            while(rs.next()){
+                Account account=new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
+                return account;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }

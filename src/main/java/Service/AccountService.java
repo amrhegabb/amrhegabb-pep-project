@@ -11,10 +11,13 @@ public class AccountService {
     }
 
     public Account addAccount(Account account) {
-        if(account.username!=null&&account.username!=""&&account.password.length()>4&&accountDAO.searchaccount(account)!=null)
-        return accountDAO.insertaccount(account);
+        if(account.username!=null&&account.username!=""&&account.password.length()>4&&accountDAO.searchaccountbyusername(account.username)==null)
+        return accountDAO.insertaccount(account.username,account.password);
         else
         return null;
+    }
+    public Account loginAccount(Account account){
+        return accountDAO.loginAccount(account.username, account.password);
     }
 
     
