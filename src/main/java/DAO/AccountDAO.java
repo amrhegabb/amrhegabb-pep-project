@@ -27,24 +27,6 @@ public class AccountDAO {
         }
         return null;
     }
-      //Search account by password
-      public Account searchaccountbypassword (String password){
-        Connection connection=ConnectionUtil.getConnection();
-        try{
-            String sql="SELECT * FROM account WHERE password = ? ";
-            PreparedStatement preparedStatement=connection.prepareStatement(sql);
-            preparedStatement.setString(1,password);
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                Account account=new Account(rs.getInt("account_id"),rs.getString("username"),rs.getString("password"));
-                return account;
-            }
-        }
-        catch(SQLException e){
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
 
     //insert account
     public  Account insertaccount(String username,String password){
@@ -52,6 +34,7 @@ public class AccountDAO {
         Connection connection=ConnectionUtil.getConnection();
         
         try{
+            
             String sql="INSERT INTO Account (username,password) VALUES(?,?)";
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
             preparedStatement.setString(1, username);
