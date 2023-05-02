@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,8 +23,8 @@ public class SocialMediaController {
     MessageService messageService;
     
 public SocialMediaController(){
-    accountService= new AccountService();
-    messageService= new MessageService();
+    this.accountService= new AccountService();
+    this.messageService= new MessageService();
 }
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -35,6 +37,7 @@ public SocialMediaController(){
         app.post("/login", this::login);
         app.post("messages", this::addMessage);
         app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessagebyid);
 
         return app;
     }
@@ -49,10 +52,10 @@ public SocialMediaController(){
             Account account = mapper.readValue(ctx.body(), Account.class);
             Account addedAccount = accountService.loginAccount(account);
             if(addedAccount==null){
-                ctx.status(401);
+               ctx.status(400);
             }else{
                 ctx.status(200);
-                ctx.json(accountService.loginAccount(addedAccount));
+                ctx.json(mapper.writeValueAsString(addedAccount));
             }
         }
 
@@ -61,17 +64,17 @@ public SocialMediaController(){
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
         Account addedAccount = accountService.addAccount(account);
-        if(addedAccount==null){
-            ctx.status(400);
-        }else{
+        if(addedAccount!=null){
             ctx.status(200);
             ctx.json(mapper.writeValueAsString(addedAccount));
-            ctx.json(accountService.addAccount(addedAccount));
+        }else{
+            ctx.status(400);
         }
     }
 
     private void getAllMessagesHandler(Context ctx){
-        ctx.json(messageService.getallMessages());
+        List<Message> messages=messageService.getallMessages();
+        ctx.json(messages);
     }
 
     //add message
@@ -79,13 +82,21 @@ public SocialMediaController(){
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message addedMessage = messageService.insertMessage(message);
-        if(addedMessage==null){
-            ctx.status(400);
-        }else{
+        if(addedMessage!=null){
             ctx.status(200);
-            ctx.json(messageService.insertMessage(addedMessage));
+            ctx.json(mapper.writeValueAsString(addedMessage));
+        }else{
+           ctx.status(400);
         }
     }
+    private void getMessagebyid(Context ctx) {
+        ObjectMapper mapper =new ObjectMapper();
+        String id= mapper.readValue(ctx.h(), String);
+        Message message = messageService.getMessagebyid();
+        ctx.json(message);
+
+    }
+  
    
 
 

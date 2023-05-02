@@ -11,10 +11,19 @@ public class MessageService {
         messageDAO=new MessageDAO();
     }
     public Message insertMessage(Message message){
-        return messageDAO.insertMessage(message);
+        if(message.message_text.isBlank())
+        return null;
+        else if(message.message_text.length()>253)
+        return null;
+        else
+        return messageDAO.insertMessage(message.getPosted_by(),message.getMessage_text(),message.getTime_posted_epoch());
     }
     public List<Message> getallMessages() {
-        return messageDAO.getallMessages();
+        List<Message> mesages =messageDAO.getallMessages();
+        return mesages;
+    }
+    public Message getMessagebyid() {
+        return messageDAO.getMessagebyitsid();
     }
 
  
