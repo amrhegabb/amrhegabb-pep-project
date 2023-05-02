@@ -25,11 +25,7 @@ public class AccountService {
     }
 
     public Account loginAccount(Account account){
-        List<Account> accounts= accountDAO.getAllaccounts();
-        if(accounts.contains(account))
         return accountDAO.loginAccount(account.getUsername(), account.getPassword());
-        else
-        return null;
     }
 
     public List<Account> getAllAccounts() {

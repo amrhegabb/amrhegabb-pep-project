@@ -56,13 +56,12 @@ public class AccountDAO {
     //login account 
     public Account loginAccount(String username,String password){
         Connection connection= ConnectionUtil.getConnection();
-        
         try {
-            String sql="SELECT * FROM account WHERE username = ?,password = ? ";
+            String sql="SELECT * FROM account WHERE username = ? AND password = ? ";
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
-            preparedStatement.setString(1,username );
+            preparedStatement.setString(1,username);
             preparedStatement.setString(2, password);
-            ResultSet rs=preparedStatement.executeQuery(sql);
+            ResultSet rs=preparedStatement.executeQuery();
             while(rs.next()){
                 Account account=new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
                 return account;
