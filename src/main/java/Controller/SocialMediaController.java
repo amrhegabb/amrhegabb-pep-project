@@ -91,7 +91,6 @@ public SocialMediaController(){
     }
     private void getMessagebyid(Context ctx) {
         ObjectMapper mapper =new ObjectMapper();
-        String id= mapper.readValue(ctx.h(), String);
         Message message = messageService.getMessagebyid();
         ctx.json(message);
 
